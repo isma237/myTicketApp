@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 import logging
 
 dynamodb = boto3.resource('dynamodb')
-ticket = dynamodb.Table('myTicketTable')
+table = dynamodb.Table('myTicketTable')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -15,19 +15,19 @@ logger.setLevel(logging.INFO)
 def lambda_handler(event, context):
     try:
         request = json.loads(event['body'])
-        response = ticket.put_item(
-            Item={
+        ticket = {
                 "Id": str(uuid.uuid4()),
                 "title": request.get('title'),
                 "content": request.get('content'),
                 "category": request.get('category')
-            })
+            }
+        table.put_item(Item=ticket)
 
         return {
             "statusCode": 200,
             "body": json.dumps({
                 "message": "New Ticket created!",
-                "data": response
+                "data": ticket
             })
         }
     except ClientError as err:
