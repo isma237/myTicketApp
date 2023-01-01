@@ -5,31 +5,29 @@ import logging
 import boto3
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('myTicketTable')
+logger.setLevel(logging.INFO)
 
 
 def lambda_handler(event, context):
-    logger.info("Nouvelle demande")
     try:
         query = event['queryStringParameters']
-        data = table.get_item(Key={'Id': query.get('ticket_id')})
-        print(data)
+        response = table.get_item(Key={'Id': query.get('ticket_id')})
+        logger.info(f"Data: {response['Item']}")
         return {
             "statusCode": 200,
             "body": json.dumps({
-                "message": "hello world",
-                "data": data
+                "data": response['Item']
             }),
         }
     except Exception as error:
-        logger.error('Impossible de recuperer la fonnée %s', error.response['Error']['Message'])
+        logger.error(f"Document non disponible: Id:  {query.get('ticket_id')}")
         return {
             "statusCode": 200,
             "body": json.dumps({
-                "message": "Un probleme est survénu",
-                "error": error
+                "message": f"Document non disponible: Id:  {query.get('ticket_id')}",
             }),
         }
 

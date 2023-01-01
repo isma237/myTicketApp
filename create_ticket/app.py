@@ -8,13 +8,13 @@ import logging
 
 dynamodb = boto3.resource('dynamodb')
 ticket = dynamodb.Table('myTicketTable')
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def lambda_handler(event, context):
     try:
         request = json.loads(event['body'])
-        print(request)
         response = ticket.put_item(
             Item={
                 "Id": str(uuid.uuid4()),
