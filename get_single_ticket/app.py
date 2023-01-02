@@ -14,7 +14,7 @@ logger.setLevel(logging.INFO)
 def lambda_handler(event, context):
     try:
         query = event['queryStringParameters']
-        response = table.get_item(Key={'Id': query.get('ticket_id')})
+        response = table.get_item(Key={'owner_email': query.get('owner_email'), 'title': query.get('title')})
         logger.info(f"Data: {response['Item']}")
         return {
             "statusCode": 200,

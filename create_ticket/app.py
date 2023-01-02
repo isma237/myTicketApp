@@ -5,6 +5,7 @@ import uuid
 # import requests
 from botocore.exceptions import ClientError
 import logging
+from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('myTicketTable')
@@ -15,12 +16,17 @@ logger.setLevel(logging.INFO)
 def lambda_handler(event, context):
     try:
         request = json.loads(event['body'])
+        now = datetime.now()
         ticket = {
-                "Id": str(uuid.uuid4()),
-                "title": request.get('title'),
-                "content": request.get('content'),
-                "category": request.get('category')
-            }
+            "title": request.get('title'),
+            "content": request.get('content'),
+            "category": request.get('category'),
+            "type": request.get('type'),
+            "priority": request.get('priority'),
+            "owner_email": request.get('owner_email'),
+            "terminated": False,
+            "created_at": now.strftime("%m/%d/%Y, %H:%M:%S")
+        }
         table.put_item(Item=ticket)
 
         return {
