@@ -5,21 +5,20 @@ Description: >
 
   Sample SAM Template for MyTicket
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 3
 
 Resources:
   HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: hello_world/
       Handler: app.lambda_handler
       Runtime: python3.9
       Events:
         HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /hello
             Method: get
@@ -39,12 +38,11 @@ Resources:
           - dynamodb:Query
           Resource: !GetAtt TicketTable.Arn
       Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        GetSingleTicket:
+          Type: Api
           Properties:
             Path: /ticket
             Method: get
-
   CreateTicketFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -61,7 +59,7 @@ Resources:
             Resource: !GetAtt TicketTable.Arn
       Events:
         CreateTicket:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /ticket
             Method: post
@@ -71,27 +69,27 @@ Resources:
       AttributeDefinitions:
         - AttributeName: owner_email
           AttributeType: S
-        - AttributeName: type
+        - AttributeName: title
           AttributeType: S
         - AttributeName: user_email
           AttributeType: S
-        - AttributeName: priotity
-          AttributeType: N
+        - AttributeName: type
+          AttributeType: S
       KeySchema:
         - AttributeName: owner_email
           KeyType: HASH
-        - AttributeName: type
+        - AttributeName: title
           KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       TableName: "myTicketTable"
       GlobalSecondaryIndexes:
-        - IndexName: EmailResourceAndPriority
+        - IndexName: EmailResourceAndTitle
           KeySchema:
             - AttributeName: user_email
               KeyType: HASH
-            - AttributeName: priotity
+            - AttributeName: type
               KeyType: RANGE
           Projection:
             NonKeyAttributes:
