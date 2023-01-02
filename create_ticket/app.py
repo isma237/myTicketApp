@@ -39,7 +39,7 @@ def lambda_handler(event, context):
     except ClientError as err:
         logger.error(err)
         return {
-            "statusCode": 200,
+            "statusCode": 300,
             "body": json.dumps({
                 "message": "Problem",
                 "error": "Un probleme est survenu"
@@ -48,7 +48,7 @@ def lambda_handler(event, context):
     except Exception as error:
         logger.error(error)
         return {
-            "statusCode": 200,
+            "statusCode": 300,
             "body": json.dumps({
                 "message": "Problem",
                 "error": "Un probleme est survenu"

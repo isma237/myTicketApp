@@ -63,6 +63,43 @@ Resources:
           Properties:
             Path: /ticket
             Method: post
+  SendEmailToResponsableFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: send_email_responsable/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Policies:
+        - AWSLambdaExecute
+        - Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:DescribeStream
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:ListStreams
+            Resource: !GetAtt TicketTable.StreamArn
+        - Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - ses:SendEmail
+            - SES:SendRawEmail
+            Resource: arn:aws:ses:us-west-2:200468223018:*
+        - Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - sts:AssumeRole
+            Resource: arn:aws:sts::200468223018:*
+      Events:
+        StreamSendEmailToResponsable:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt TicketTable.StreamArn
+            BatchSize: 100
+            StartingPosition: TRIM_HORIZON
   TicketTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -100,6 +137,8 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
