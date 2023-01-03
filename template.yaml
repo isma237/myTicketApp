@@ -87,12 +87,6 @@ Resources:
             - ses:SendEmail
             - SES:SendRawEmail
             Resource: arn:aws:ses:us-west-2:200468223018:*
-        - Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - sts:AssumeRole
-            Resource: arn:aws:sts::200468223018:*
       Events:
         StreamSendEmailToResponsable:
           Type: DynamoDB
