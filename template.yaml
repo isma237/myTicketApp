@@ -10,6 +10,10 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Adresse email de l'emetteur
     Default: /Nabisso/MyTicket/Dev/SenderEmailAddress
+  SESIdentitySenderUser:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: SES Identity for Sender Email User
+    Default: /Nabisso/MyTicket/Dev/SESIdentity
 
 Globals:
   Function:
@@ -95,7 +99,7 @@ Resources:
             Action:
             - ses:SendEmail
             - SES:SendRawEmail
-            Resource: arn:aws:ses:us-west-2:*:*
+            Resource: !Ref SESIdentitySenderUser
       Events:
         StreamSendEmailToResponsable:
           Type: DynamoDB
