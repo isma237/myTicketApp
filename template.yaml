@@ -86,7 +86,7 @@ Resources:
             Action:
             - ses:SendEmail
             - SES:SendRawEmail
-            Resource: arn:aws:ses:us-west-2:200468223018:*
+            Resource: arn:aws:ses:us-west-2:*:*
       Events:
         StreamSendEmailToResponsable:
           Type: DynamoDB
